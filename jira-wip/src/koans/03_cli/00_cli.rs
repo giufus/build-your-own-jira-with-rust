@@ -23,7 +23,7 @@
 //!
 //! When you are ready, uncomment the appropriate lines from src/main.rs and
 //! run `cargo run --bin jira-wip` in your terminal!
-use super::store_recap::{TicketStore, Status, TicketDraft, TicketPatch, TicketTitle, TicketDescription};
+use super::store_recap::{TicketStore, Status, TicketTitle, TicketDescription};
 use super::id_generation::TicketId;
 use std::error::Error;
 use std::str::FromStr;
@@ -89,7 +89,7 @@ impl FromStr for TicketTitle {
     type Err = ParsingError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-       TicketTitle::new(s.into()).map_err(|e| ParsingError("Not a valid title".into()))
+       TicketTitle::new(s.into()).map_err(|_e| ParsingError("Not a valid title".into()))
     }
 }
 
@@ -99,7 +99,7 @@ impl FromStr for TicketDescription {
     type Err = ParsingError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        TicketDescription::new(s.into()).map_err(|e| ParsingError("Not a valid description".into()))
+        TicketDescription::new(s.into()).map_err(|_e| ParsingError("Not a valid description".into()))
     }
 }
 
@@ -126,14 +126,14 @@ impl std::fmt::Display for ParsingError {
 /// https://doc.rust-lang.org/book/ch17-02-trait-objects.html#using-trait-objects-that-allow-for-values-of-different-types
 pub fn handle_command(ticket_store: &mut TicketStore, command: Command) -> Result<(), Box<dyn Error>> {
     match command {
-        Command::Create { description, title } => {
+        Command::Create { description: _, title: _ } => {
             todo!()
         }
         Command::Edit {
-            id,
-            title,
-            description,
-            status,
+            id: _,
+            title: _,
+            description: _,
+            status: _,
         } => {
             todo!()
         }

@@ -6,7 +6,7 @@ use super::recap::Status;
 /// See:
 /// - https://en.wikipedia.org/wiki/Coordinated_Universal_Time
 /// - https://docs.rs/chrono/0.4.11/chrono/
-use chrono::{Date, DateTime, Utc};
+use chrono::{DateTime, Utc};
 use std::collections::HashMap;
 use std::time::SystemTime;
 

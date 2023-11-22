@@ -3,7 +3,7 @@ use super::recap::Status;
 use chrono::{DateTime, Utc};
 use std::collections::HashMap;
 use std::error::Error;
-use std::ops::Deref;
+
 
 /// There are only two pieces missing: deleting a ticket and updating a ticket
 /// in our `TicketStore`.
