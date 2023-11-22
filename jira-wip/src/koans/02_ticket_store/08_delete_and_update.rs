@@ -3,6 +3,7 @@ use super::recap::Status;
 use chrono::{DateTime, Utc};
 use std::collections::HashMap;
 use std::error::Error;
+use std::ops::Deref;
 
 /// There are only two pieces missing: deleting a ticket and updating a ticket
 /// in our `TicketStore`.
@@ -58,14 +59,33 @@ impl TicketStore {
     /// If the `id` passed in matches a ticket in the store, we return the edited ticket.
     /// If it doesn't, we return `None`.
     pub fn update(&mut self, id: &TicketId, patch: TicketPatch) -> Option<&Ticket> {
-        todo!()
+        match self.data.get_mut(id) {
+            None => None,
+            Some(ticket) => {
+                patch.status.is_some_and(|s| { ticket.status = s; true });
+                patch.title.is_some_and(|t| { ticket.title = t; true });
+                patch.description.is_some_and(|d| { ticket.description = d; true });
+                ticket.updated_at = Utc::now();
+                Some(ticket)
+            }
+        }
     }
 
     /// If the `id` passed in matches a ticket in the store, we return the deleted ticket
     /// with some additional metadata.
     /// If it doesn't, we return `None`.
     pub fn delete(&mut self, id: &TicketId) -> Option<DeletedTicket> {
-        todo!()
+        match self.data.remove(id) {
+            None => None,
+            Some(deleted) => {
+                Some(
+                    DeletedTicket {
+                        ticket: deleted,
+                        deleted_at: Utc::now(),
+                    }
+                )
+            }
+        }
     }
 
     fn generate_id(&mut self) -> TicketId {

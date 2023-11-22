@@ -1,3 +1,4 @@
+
 enum Status {
     ToDo,
     InProgress,
@@ -24,7 +25,23 @@ struct Ticket {
 /// We will learn a better way to handle recoverable errors such as this one further along,
 /// but let's rely on panic for the time being.
 fn create_ticket(title: String, description: String, status: Status) -> Ticket {
-    todo!()
+    validate_title(&title);
+    validate_description(&description);
+    Ticket{title, description, status}
+}
+
+fn validate_title(title: &String) {
+    match title {
+        title if title.is_empty() => panic!("Title cannot be empty"),
+        title if title.len() > 50 => panic!("Title cannot be longer than 50 characters"),
+        _ => (),
+    }
+}
+fn validate_description(description: &String) {
+    match description {
+        desc if desc.len() > 3000 => panic!("Description cannot be longer than 3000 characters"),
+        _ => (),
+    }
 }
 
 #[cfg(test)]

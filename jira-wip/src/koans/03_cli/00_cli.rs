@@ -34,7 +34,12 @@ use std::fmt::Formatter;
 pub enum Command {
     /// Create a ticket on your board.
     Create {
-        __
+        /// New description of the ticket.
+        #[structopt(long)]
+        description: Option<TicketDescription>,
+        /// New title for your ticket.
+        #[structopt(long)]
+        title: Option<TicketTitle>,
     },
     /// Edit the details of an existing ticket.
     Edit {
@@ -53,7 +58,9 @@ pub enum Command {
     },
     /// Delete a ticket from the store passing the ticket id.
     Delete {
-        __
+        /// Id of the ticket you want to delete.
+        #[structopt(long)]
+        id: TicketId,
     },
     /// List all existing tickets.
     List,
@@ -68,16 +75,32 @@ impl FromStr for Status {
     type Err = ParsingError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        __
+        match s {
+            "ToDo" => Ok(Status::ToDo),
+            "InProgress" => Ok(Status::InProgress),
+            "Blocked" => Ok(Status::Blocked),
+            "Done" => Ok(Status::Done),
+            _ => Err(ParsingError("Not a good status".into())),
+        }
     }
 }
 
 impl FromStr for TicketTitle {
-    __
+    type Err = ParsingError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+       TicketTitle::new(s.into()).map_err(|e| ParsingError("Not a valid title".into()))
+    }
 }
 
+
+
 impl FromStr for TicketDescription {
-    __
+    type Err = ParsingError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        TicketDescription::new(s.into()).map_err(|e| ParsingError("Not a valid description".into()))
+    }
 }
 
 /// Our error struct for parsing failures.
@@ -114,7 +137,7 @@ pub fn handle_command(ticket_store: &mut TicketStore, command: Command) -> Resul
         } => {
             todo!()
         }
-        Command::Delete { ticket_id } => match ticket_store.delete(&ticket_id) {
+        Command::Delete { id: ticket_id } => match ticket_store.delete(&ticket_id) {
             Some(deleted_ticket) => println!(
                 "The following ticket has been deleted:\n{:?}",
                 deleted_ticket

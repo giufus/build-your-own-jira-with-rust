@@ -6,8 +6,9 @@ use super::recap::Status;
 /// See:
 /// - https://en.wikipedia.org/wiki/Coordinated_Universal_Time
 /// - https://docs.rs/chrono/0.4.11/chrono/
-use chrono::{DateTime, Utc};
+use chrono::{Date, DateTime, Utc};
 use std::collections::HashMap;
+use std::time::SystemTime;
 
 struct TicketStore {
     data: HashMap<TicketId, Ticket>,
@@ -29,8 +30,10 @@ impl TicketStore {
         }
     }
 
-    pub fn save(&mut self, ticket: Ticket) -> TicketId {
+    pub fn save(&mut self, mut ticket: Ticket) -> TicketId {
         let id = self.generate_id();
+        ticket.created_at = Some(chrono::DateTime::from(SystemTime::now()));
+        ticket.id = Some(id);
         self.data.insert(id, ticket);
         id
     }
@@ -50,6 +53,8 @@ pub struct Ticket {
     title: String,
     description: String,
     status: Status,
+    created_at: Option<DateTime<Utc>>,
+    id: Option<TicketId>,
 }
 
 impl Ticket {
@@ -66,13 +71,13 @@ impl Ticket {
     }
 
     // The datetime when the ticket was saved in the store, if it was saved.
-    pub fn created_at(&self) -> __ {
-        todo!()
+    pub fn created_at(&self) -> Option<DateTime<Utc>> {
+        self.created_at
     }
 
     // The id associated with the ticket when it was saved in the store, if it was saved.
-    pub fn id(&self) -> __ {
-        todo!()
+    pub fn id(&self) -> Option<&TicketId> {
+        self.id.as_ref()
     }
 }
 
@@ -91,6 +96,8 @@ pub fn create_ticket(title: String, description: String, status: Status) -> Tick
         title,
         description,
         status,
+        created_at: None,
+        id: None,
     }
 }
 
